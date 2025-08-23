@@ -24,6 +24,6 @@ steps:
 - task: PublishPipelineArtifact@1
   displayName: 'Publish build artifact'
   inputs:
-    targetPath: '$(System.DefaultWorkingDirectory)/BMI-Calculator/target'
+    targetPath: '$(System.DefaultWorkingDirectory)/maven/BMI-Calculator/target'
     artifact: 'maven-build'
     publishLocation: 'pipeline'

@@ -8,24 +8,26 @@
 trigger:
   branches:
     include:
-      - main              # change if you use another branch
+      - main
   paths:
     include:
-      - maven/BMI-Calculator/**   # run only when files here change
+      - maven/BMI-Calculator/**
 
 pool:
-  name: newpool
-  demands:
-    - Agent.Name -equals   projectagent  # target this specific machine
+  vmImage: 'ubuntu-latest'   # Microsoft-hosted agent (no setup needed)
 
 steps:
+# Set up Java (adjust version if needed)
+- task: UseJavaVersion@1
+  inputs:
+    versionSpec: '24'       # or 21 if your Maven project requires Java 21
+    architecture: 'x64'
+
 # Build & test with Maven
 - task: Maven@4
   inputs:
     mavenPomFile: 'maven/BMI-Calculator/pom.xml'
-    goals: 'clean test'                   # regression tests
-    javaHomeOption: 'Path'
-    jdkDirectory: 'C:/Program Files/Java/jdk-24.0.2'   # <-- set to your real JDK
+    goals: 'clean test'
     mavenVersionOption: 'Default'
     publishJUnitResults: true
 
@@ -36,4 +38,3 @@ steps:
     targetPath: '$(System.DefaultWorkingDirectory)/maven/BMI-Calculator/target'
     artifact: 'maven-build'
     publishLocation: 'pipeline'
-

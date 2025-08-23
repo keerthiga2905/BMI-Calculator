@@ -14,7 +14,7 @@ steps:
 # Run Maven build & tests
 - task: Maven@4
   inputs:
-    mavenPomFile: 'BMI-Calculator/pom.xml'
+    mavenPomFile: 'maven/BMI-Calculator/pom.xml'
     goals: 'package'
     mavenVersionOption: 'Default'
     publishJUnitResults: true

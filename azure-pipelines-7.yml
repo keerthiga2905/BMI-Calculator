@@ -3,25 +3,27 @@
 # Add steps that analyze code, save build artifacts, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/java
 trigger:
-  - main
+- main
 
 pool:
-  vmImage: 'ubuntu-latest'   # Microsoft-hosted agent
+  vmImage: 'ubuntu-latest'
 
 steps:
-# Select Java version (11 here, change if you need 17 or 21)
-- task: JavaToolInstaller@0
-  inputs:
-    versionSpec: '21'
-    jdkArchitectureOption: 'x64'
-    jdkSourceOption: 'PreInstalled'
+- checkout: self
 
-# Build & test with Maven
+# Run Maven build & tests
 - task: Maven@4
   inputs:
-    mavenPomFile: 'maven/BMI-Calculator/pom.xml'
-    mavenOptions: '-Xmx3072m'
+    mavenPomFile: 'BMI-Calculator/pom.xml'
     goals: 'package'
+    mavenVersionOption: 'Default'
     publishJUnitResults: true
     testResultsFiles: '**/surefire-reports/TEST-*.xml'
-    mavenVersionOption: 'Default'
+
+# Publish build artifacts
+- task: PublishPipelineArtifact@1
+  displayName: 'Publish build artifact'
+  inputs:
+    targetPath: '$(System.DefaultWorkingDirectory)/BMI-Calculator/target'
+    artifact: 'maven-build'
+    publishLocation: 'pipeline'

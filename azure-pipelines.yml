@@ -10,12 +10,12 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-# Set up Java (fixed)
+# Set up Java
 - task: JavaToolInstaller@0
   inputs:
-    versionSpec: '24'          # or 21 if required
-    jdkArchitecture: 'x64'
-    jdkSourceOption: 'PreInstalled'
+    versionSpec: '24'                 # Java version required
+    jdkArchitectureOption: 'x64'      # Must use this key
+    jdkSourceOption: 'PreInstalled'   # Use preinstalled JDK
 
 # Build & test with Maven
 - task: Maven@4
@@ -25,7 +25,7 @@ steps:
     mavenVersionOption: 'Default'
     publishJUnitResults: true
     javaHomeOption: 'Path'
-    jdkDirectory: $(JAVA_HOME_24_X64)   # matches the Java version installed above
+    jdkDirectory: $(JAVA_HOME_24_X64)   # Automatically set by JavaToolInstaller
 
 # Publish build output as artifact
 - task: PublishPipelineArtifact@1

@@ -10,24 +10,38 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-# Set up Java
+# ========================
+# Step 1: Set up Java
+# ========================
 - task: JavaToolInstaller@0
   inputs:
-    versionSpec: '24'                 # Java version required
-    jdkArchitectureOption: 'x64'      # Must use this key
-    jdkSourceOption: 'PreInstalled'   # Use preinstalled JDK
+    versionSpec: '21'                 # Use Java 21 (LTS). Change to '24' when available.
+    jdkArchitectureOption: 'x64'
+    jdkSourceOption: 'PreInstalled'   # Use preinstalled JDK on the agent
 
-# Build & test with Maven
+# Verify Java version
+- script: |
+    echo "Java version in use:"
+    java -version
+  displayName: 'Verify Java installation'
+
+# ========================
+# Step 2: Build & Test with Maven
+# ========================
 - task: Maven@4
   inputs:
     mavenPomFile: 'maven/BMI-Calculator/pom.xml'
     goals: 'clean test'
     mavenVersionOption: 'Default'
     publishJUnitResults: true
+    testResultsFiles: '**/surefire-reports/TEST-*.xml'
     javaHomeOption: 'Path'
-    jdkDirectory: $(JAVA_HOME_24_X64)   # Automatically set by JavaToolInstaller
+    jdkDirectory: $(JAVA_HOME_21_X64)   # Use Java 21 (change to JAVA_HOME_24_X64 once Java 24 is supported)
+  displayName: 'Build and Test Maven Project'
 
-# Publish build output as artifact
+# ========================
+# Step 3: Publish Build Artifact
+# ========================
 - task: PublishPipelineArtifact@1
   displayName: 'Publish build artifact'
   inputs:

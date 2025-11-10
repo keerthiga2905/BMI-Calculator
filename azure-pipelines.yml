@@ -1,10 +1,3 @@
-# Maven
-# Build your Java project and run tests with Apache Maven.
-# Add steps that analyze code, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/java
-
-# maven/BMI-Calculator/azure-pipelines.yml
-
 trigger:
   branches:
     include:
@@ -14,14 +7,15 @@ trigger:
       - maven/BMI-Calculator/**
 
 pool:
-  vmImage: 'ubuntu-latest'   # Microsoft-hosted agent (no setup needed)
+  vmImage: 'ubuntu-latest'
 
 steps:
-# Set up Java (adjust version if needed)
-- task: UseJavaVersion@1
+# Set up Java (fixed)
+- task: JavaToolInstaller@0
   inputs:
-    versionSpec: '24'       # or 21 if your Maven project requires Java 21
-    architecture: 'x64'
+    versionSpec: '24'          # or 21 if required
+    jdkArchitecture: 'x64'
+    jdkSourceOption: 'PreInstalled'
 
 # Build & test with Maven
 - task: Maven@4
@@ -30,6 +24,8 @@ steps:
     goals: 'clean test'
     mavenVersionOption: 'Default'
     publishJUnitResults: true
+    javaHomeOption: 'Path'
+    jdkDirectory: $(JAVA_HOME_24_X64)   # matches the Java version installed above
 
 # Publish build output as artifact
 - task: PublishPipelineArtifact@1
